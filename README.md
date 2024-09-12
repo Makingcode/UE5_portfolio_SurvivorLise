@@ -33,3 +33,24 @@
 
 
 ![GameSequence](https://github.com/user-attachments/assets/efe103fe-2db2-4c35-b012-35fa46f286f5)
+
+
+--------------------------
+
+
+
+##로딩
+
+비동기방식 레벨 로딩
+SLGameInstance에서 관리
+레벨이동시 로딩레벨로 이동 이후
+이동할 레벨을 LoadStreaming LatentActionInfo의 ExecutionFunction에 의해 로드가 완료되면 OnLevelLoaded 함수가 호출되고
+로드된 레벨로 이동
+
+
+##플레이어 Movement
+
+![Input](https://github.com/user-attachments/assets/cf125126-c67c-4bd8-9117-344cfa431781)
+EnhancedInput을 이용해 플레이어 Movement 구현
+
+
