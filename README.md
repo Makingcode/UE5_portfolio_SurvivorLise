@@ -56,8 +56,9 @@ SLGameInstance에서 관리
 
 
 &nbsp;
-
 EnhancedInput을 이용해 플레이어 Movement 구현
+
+&nbsp;
 
 
 ## 레벨업 시스템
