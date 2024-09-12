@@ -72,6 +72,8 @@ EnhancedInput을 이용해 플레이어 Movement 구현
 
 코드간 결합도를 낮추고 재사용성을 높이기 위해 델리게이트 사용
 
+
+
 ## 스킬선택 위젯
 
 DataTable에서 모든 스킬데이터를 가져오고
@@ -117,9 +119,15 @@ for (FSkillDataTable CurrentSkillData : SkillComponent->GetCurrentUsedSkillData(
 		}
 	}
 }
-
-
-}
 ```
+
+
+
+## 스킬
+
+&nbsp;
+
+### AOE
+
 
 
