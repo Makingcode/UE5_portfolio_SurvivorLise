@@ -80,62 +80,44 @@ DataTable에서 모든 스킬데이터를 가져오고
 
 &nbsp;
 
-SkillComponent에서 현재 장착중인 나의스킬 배열을 가져와서 
+SkillComponent에서 현재 장착중인 나의스킬 배열을 가져와서 조건문을 통해 스킬선택 데이터를 뽑아 랜덤으로 3개를 위젯으로 보여줌
 
+- 장착된 스킬이 없을때
+  DataTable의 스킬레벨 1인 데이터들만 찾아 배열에 추가 후 랜덤 3개 위젯으로 보여줌
+
+- 장착된 스킬이 있을때
+  장착된 스킬의 경우 
 ```c
-void ASLPlayerState::UpdateSkillChoiceData()
+//현재 스킬이 장착되어 있는 경우
+TMap<FName, int32>EquipSkillLevels;
+for (FSkillDataTable CurrentSkillData : SkillComponent->GetCurrentUsedSkillData())
 {
-	//먼저 모든 스킬데이터를 가져옴
-	TArray<FSkillDataTable> AvaliableSkillArr;
-	if (USkillComponent* SkillComponent = Cast<USkillComponent>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->GetComponentByClass<USkillComponent>()))
-	{
-		for (FSkillDataTable* AvaliableSkill  : GetAllSkillDataArr(SkillDataTable))
-		{
-			if (SkillComponent->GetCurrentEquipSkillArr().Num() == 0)
-			{
-				if (AvaliableSkill->Skill_Level == 1)
-				{
-					AvaliableSkillArr.AddUnique(*AvaliableSkill);
-				}
-			}
-			else
-			{
-				//현재 스킬이 장착되어 있는 경우
-				TMap<FName, int32>EquipSkillLevels;
-				for (FSkillDataTable CurrentSkillData : SkillComponent->GetCurrentUsedSkillData())
-				{
-					//현재 장착중인 스킬이름 및 레벨
-					EquipSkillLevels.Add(CurrentSkillData.Skill_Name, CurrentSkillData.Skill_Level);
-				}
+	//현재 장착중인 스킬이름 및 레벨
+	EquipSkillLevels.Add(CurrentSkillData.Skill_Name, CurrentSkillData.Skill_Level);
+}
 
-				//장착중인 스킬의 경우
-				for (FSkillDataTable CurrentSkillData : SkillComponent->GetCurrentUsedSkillData())
-				{
-					int32* CurrentLevel = EquipSkillLevels.Find(AvaliableSkill->Skill_Name);
-					//레벨 1올리기
-					if (CurrentLevel)
-					{
-						if (AvaliableSkill->Skill_Level == *CurrentLevel + 1)
-						{
-							AvaliableSkillArr.AddUnique(*AvaliableSkill);
-						}
-					}
-					else
-					{	
-						//장착중이지 않은 스킬은 레벨 1
-						if (AvaliableSkill->Skill_Level == 1)
-						{
-							AvaliableSkillArr.AddUnique(*AvaliableSkill);
-						}
-					}
-				}
-			}
-		}	
-	}
-	if (AvaliableSkillArr.Num() != 0)
+//장착중인 스킬의 경우
+for (FSkillDataTable CurrentSkillData : SkillComponent->GetCurrentUsedSkillData())
+{
+	int32* CurrentLevel = EquipSkillLevels.Find(AvaliableSkill->Skill_Name);
+	//레벨 1올리기
+	if (CurrentLevel)
 	{
-		SkillDataLoadDelegate.ExecuteIfBound(AvaliableSkillArr);
+		if (AvaliableSkill->Skill_Level == *CurrentLevel + 1)
+		{
+			AvaliableSkillArr.AddUnique(*AvaliableSkill);
+		}
 	}
+	else
+	{	
+		//장착중이지 않은 스킬은 레벨 1
+		if (AvaliableSkill->Skill_Level == 1)
+		{
+			AvaliableSkillArr.AddUnique(*AvaliableSkill);
+		}
+	}
+}
+
 
 }
 ```
