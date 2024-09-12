@@ -207,7 +207,7 @@ void ASLMainCharacter::ResetAttack()
 
 &nbsp;
 
-### AOE
+### AOE (Area of Effect)
 
 ApplyRadialDamage를 이용하여 데미지 발생, IgnoreActor로 플레이어 캐릭터를 추가하여 플레이어 캐릭터는 본인 스킬에 데미지를 안입게 설정
 
@@ -259,3 +259,53 @@ void ASLSkillBeam::FindEnemyChecker()
 	}
 }
 ```
+
+
+&nbsp;
+
+
+## 최적화
+
+Tick 사용 최소화 -> Tick이 필요한 부분 SetTimer로 대체
+플레이어 캐릭터와 일정거리 이상이면 스폰되어 있어도 SetVisibility를 false하여 렌더링 중지
+
+```c
+void ASLEnemyCharacter::SetCharacterVisible()
+{
+	float Distance = FVector::Dist(GetActorLocation(), MainCharacter->GetActorLocation());
+
+	if (Distance >= 2500.f)
+	{
+		GetMesh()->SetVisibility(false);
+	}
+	else
+	{ 
+		GetMesh()->SetVisibility(true);
+	}
+}
+```
+
+&nbsp;
+---------------------------------------------
+
+## 결론
+
+
+
+
+### 프로젝트를 하며 배운점
+
+이전 포트폴리오들에서는 사용을 거의 안했던 델리게이트를 적극 사용하며 코드의 결합도를 낮추고 재사용성을 높였다
+매니저에 해당하는 게임인스턴스, 플레이어스테이트, 게임스테이트도 적극 이용하였고 게임의 전반적인 흐름이나 관리가 이전 포트폴리오 보단 더욱 잘되었다
+기존에 잘 사용안했던 데이터테이블을 이용하였고 캐릭터 레벨별에 따른 경험치양이나 스킬데이터 관리가 용이했다
+
+
+
+### 개선이 필요한점
+
+1. Beam 발사되었을때 끝부분의 콜리전에 히트해도 데미지가 안들어가는 경우가 있어 이펙트상으로는 레이저에 맞았는데도 데미지가 아예 안들어가는 경우가 있음
+
+2. DOT 스킬의 경우 스킬이 시전되고 있는 중에 레벨업하여 DOT스킬을 선택하면 스킬이 중복으로 들어가는 문제가 있음
+--> DOT스킬의 경우 시전시간동안 스킬스포너에 Attach 되어 있기 때문에 해당 Spawner에 Attach된 스킬이 있는 것을 검사하여 만약 있으면 스킬 생성이 안되고
+스킬의 데미지를 업데이트 하는 방향으로 가면 되지 않을까 생각됨
+
