@@ -1,8 +1,10 @@
 # UE5_portfolio_SurvivorLise
 언리얼5 클라이언트 포트폴리오 입니다.
 
+&nbsp
+
 ##플레이 영상
-https://youtu.be/sh3eEuVhegQ
+https://youtu.be/sh3eEuVhegQ?si=cgK1m-Z9dWvMizYW
 
 ----------------------
 
