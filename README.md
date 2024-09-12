@@ -21,4 +21,8 @@
 ------------------------
 
 
+##구조
+
+###레벨 구조
+![1](https://github.com/user-attachments/assets/849c8134-1f20-48e3-8c9c-2a52f15a0bc0)
 
