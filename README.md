@@ -26,4 +26,7 @@
 ![Level](https://github.com/user-attachments/assets/14aea421-86d5-4926-84bb-0ffb02c7634a)
 
 
+##게임흐름
 
+
+![GameSequence](https://github.com/user-attachments/assets/efe103fe-2db2-4c35-b012-35fa46f286f5)
