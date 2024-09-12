@@ -39,7 +39,7 @@
 
 
 
-##로딩
+## 로딩
 
 비동기방식 레벨 로딩
 SLGameInstance에서 관리
@@ -50,7 +50,7 @@ SLGameInstance에서 관리
 &nbsp;
 
 
-##플레이어 Movement
+## 플레이어 Movement
 
 ![Input](https://github.com/user-attachments/assets/cf125126-c67c-4bd8-9117-344cfa431781)&nbsp;
 EnhancedInput을 이용해 플레이어 Movement 구현
