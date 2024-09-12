@@ -32,7 +32,7 @@
 ##게임흐름
 
 
-![GameSequence](https://github.com/user-attachments/assets/efe103fe-2db2-4c35-b012-35fa46f286f5)
+![GameSequence](https://github.com/user-attachments/assets/efe103fe-2db2-4c35-b012-35fa46f286f5) &nbsp;
 
 
 --------------------------
@@ -47,10 +47,23 @@ SLGameInstance에서 관리
 이동할 레벨을 LoadStreaming LatentActionInfo의 ExecutionFunction에 의해 로드가 완료되면 OnLevelLoaded 함수가 호출되고
 로드된 레벨로 이동
 
+&nbsp;
+
 
 ##플레이어 Movement
 
-![Input](https://github.com/user-attachments/assets/cf125126-c67c-4bd8-9117-344cfa431781)
+![Input](https://github.com/user-attachments/assets/cf125126-c67c-4bd8-9117-344cfa431781)&nbsp;
 EnhancedInput을 이용해 플레이어 Movement 구현
+
+
+## 레벨업 시스템
+
+플레이어의 레벨은 플레이어 스테이트에서 관리
+
+-전체적인 흐름-
+
+![LevelupSequence](https://github.com/user-attachments/assets/c197ef9a-1186-4296-9296-0de8604343a4)&nbsp;
+
+
 
 
