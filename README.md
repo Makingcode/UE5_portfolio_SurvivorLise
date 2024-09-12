@@ -21,8 +21,9 @@
 ------------------------
 
 
-##구조
+##레벨구조
 
-###레벨 구조
-![1](https://github.com/user-attachments/assets/849c8134-1f20-48e3-8c9c-2a52f15a0bc0)
+![Level](https://github.com/user-attachments/assets/14aea421-86d5-4926-84bb-0ffb02c7634a)
+
+
 
