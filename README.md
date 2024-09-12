@@ -121,6 +121,86 @@ for (FSkillDataTable CurrentSkillData : SkillComponent->GetCurrentUsedSkillData(
 }
 ```
 
+## Dash
+
+LaunchCharacter 함수를 이용하여 대쉬 구현
+
+```c
+FVector Direction = GetLastMovementInputVector().GetSafeNormal();
+if (Direction.IsZero())
+{
+	Direction = GetActorForwardVector();
+}
+
+FVector LaunchDirection = Direction * CharacterDashDistance;
+//대쉬
+LaunchCharacter(LaunchDirection, true, true);
+```
+
+
+
+## 근접 공격
+
+휘두르는 동안 콜리전 생성을 위해 무기 메쉬의 본에 소켓 생성
+SweepMultibyChannel 함수를 이용하여 콜리전에 히트한 액터에게 ApplyDamage를 이용하여 데미지를 부여
+
+```c
+FVector Start = RightWeapon->GetSocketLocation("SwordStart");
+FVector End = RightWeapon->GetSocketLocation("SwordEnd");
+float Radius = 20.f;
+
+TArray<FHitResult> HitResults;
+FCollisionQueryParams QueryParams;
+QueryParams.AddIgnoredActor(this);
+
+//ECC_GameTraceChannel6 = Weapon 채널
+float bHit = GetWorld()->SweepMultiByChannel(HitResults, Start, End, FQuat::Identity, ECC_GameTraceChannel6, FCollisionShape::MakeSphere(Radius), QueryParams);
+
+if (bTest)
+{
+	DrawDebugLine(GetWorld(), Start, End, FColor::Red,false ,5.f);
+}
+
+if (bHit)
+{
+	for (FHitResult HitResult : HitResults)
+	{
+		if (!DamagedActors.Contains(HitResult.GetActor()))
+		{
+			UGameplayStatics::ApplyDamage(HitResult.GetActor(), 10.f, GetController(), this, nullptr);
+			DamagedActors.Add(HitResult.GetActor());
+		}
+
+	}
+}
+```
+
+### 콤보 공격
+
+몽타주안에 무기 공격 애니메이션이 2개가 존재하고 2개의 섹션으로 나눔
+
+공격을 할때마다 Attack Index가 0과 1을 왔다갔다하며 삼항연산에 의해 해당 값에 해당하는 몽타주 섹션이 작동하게 됨
+
+```c
+if (MyAnimInstance && AttackMontage)
+{
+	FName AttackSectionName = (AttackIndex == 0) ? FName("AttackStart") : FName("Attack_1");
+	MyAnimInstance->Montage_Play(AttackMontage);
+	MyAnimInstance->Montage_JumpToSection(AttackSectionName, AttackMontage);
+	float AttackDuration = AttackMontage->GetSectionLength(AttackIndex);
+	GetWorldTimerManager().SetTimer(StopAttackHandle, this, &ASLMainCharacter::ResetAttack, AttackDuration, false);
+	
+}
+
+void ASLMainCharacter::ResetAttack()
+{
+	bAttacking = false;
+	DamagedActors.Empty();
+	AttackIndex = (AttackIndex + 1) % 2;
+}
+```
+
+
 
 
 ## 스킬
@@ -129,5 +209,53 @@ for (FSkillDataTable CurrentSkillData : SkillComponent->GetCurrentUsedSkillData(
 
 ### AOE
 
+ApplyRadialDamage를 이용하여 데미지 발생, IgnoreActor로 플레이어 캐릭터를 추가하여 플레이어 캐릭터는 본인 스킬에 데미지를 안입게 설정
+
+```c
+void ASLSKillAOE::RadialDamageApply()
+{
+	TArray<AActor*> IgnoreActor;
+	IgnoreActor.Add(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	UGameplayStatics::ApplyRadialDamage(GetWorld(), Damage, GetActorLocation(), SkillRange, nullptr, IgnoreActor, this, nullptr);
+	RangeIndicator_Decal->DestroyComponent();
+
+	SkillDestroy();
+}
+```
 
 
+### Beam
+
+MakeCapsule을 통해 콜리전을 만들고 SweepMultibyChannel을 통해 콜리전에 히트한 액터들을 찾아내고 데미지를 부여
+SetTimer를 이용하여 스킬 유지시간동안 콜리전 히트 체크 및 데미지 부여
+
+```c
+void ASLSkillBeam::Attack()
+{
+	Start = GetActorLocation();
+	End = Start + (GetActorForwardVector() * MaxRange);
+	BeamComponent->SetActive(true);
+	BeamComponent->SetWorldScale3D(FVector(MaxRange * 0.001f, BeamWidth*0.1f, BeamHeight * 0.01f));
+	GetWorldTimerManager().SetTimer(CheckerHandle, this, &ASLSkillBeam::FindEnemyChecker, 0.1f, true, 0.f);
+	GetWorldTimerManager().SetTimer(BeamDestroyTimer, this, &ASLSkillBeam::BeamDestroy, 2.f, false, -1.f);
+	
+}
+
+void ASLSkillBeam::FindEnemyChecker()
+{
+	FCollisionShape BeamShape = FCollisionShape::MakeCapsule(BeamWidth, BeamHeight);
+	TArray<FHitResult> HitResults;
+	bool bHit = GetWorld()->SweepMultiByChannel(HitResults, Start, End, FQuat::Identity, ECC_GameTraceChannel6, BeamShape);
+	if (bHit)
+	{
+		for (FHitResult HitResult : HitResults)
+		{
+			if (ASLEnemyCharacter* Enemy = Cast<ASLEnemyCharacter>(HitResult.GetActor()))
+			{
+				UGameplayStatics::ApplyDamage(HitResult.GetActor(), Damage, nullptr, this, nullptr);
+			}
+		}
+
+	}
+}
+```
