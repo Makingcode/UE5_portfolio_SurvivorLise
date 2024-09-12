@@ -70,6 +70,74 @@ EnhancedInput을 이용해 플레이어 Movement 구현
 ![LevelupSequence](https://github.com/user-attachments/assets/c197ef9a-1186-4296-9296-0de8604343a4)
 &nbsp;
 
+코드간 결합도를 낮추고 재사용성을 높이기 위해 델리게이트 사용
 
+## 스킬선택 위젯
+
+DataTable에서 모든 스킬데이터를 가져오고
+
+![SkillData](https://github.com/user-attachments/assets/6bbb7222-beb3-4fb5-b5e7-fbed329b110a)
+
+&nbsp;
+
+SkillComponent에서 현재 장착중인 나의스킬 배열을 가져와서 
+
+```c
+void ASLPlayerState::UpdateSkillChoiceData()
+{
+	//먼저 모든 스킬데이터를 가져옴
+	TArray<FSkillDataTable> AvaliableSkillArr;
+	if (USkillComponent* SkillComponent = Cast<USkillComponent>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0)->GetComponentByClass<USkillComponent>()))
+	{
+		for (FSkillDataTable* AvaliableSkill  : GetAllSkillDataArr(SkillDataTable))
+		{
+			if (SkillComponent->GetCurrentEquipSkillArr().Num() == 0)
+			{
+				if (AvaliableSkill->Skill_Level == 1)
+				{
+					AvaliableSkillArr.AddUnique(*AvaliableSkill);
+				}
+			}
+			else
+			{
+				//현재 스킬이 장착되어 있는 경우
+				TMap<FName, int32>EquipSkillLevels;
+				for (FSkillDataTable CurrentSkillData : SkillComponent->GetCurrentUsedSkillData())
+				{
+					//현재 장착중인 스킬이름 및 레벨
+					EquipSkillLevels.Add(CurrentSkillData.Skill_Name, CurrentSkillData.Skill_Level);
+				}
+
+				//장착중인 스킬의 경우
+				for (FSkillDataTable CurrentSkillData : SkillComponent->GetCurrentUsedSkillData())
+				{
+					int32* CurrentLevel = EquipSkillLevels.Find(AvaliableSkill->Skill_Name);
+					//레벨 1올리기
+					if (CurrentLevel)
+					{
+						if (AvaliableSkill->Skill_Level == *CurrentLevel + 1)
+						{
+							AvaliableSkillArr.AddUnique(*AvaliableSkill);
+						}
+					}
+					else
+					{	
+						//장착중이지 않은 스킬은 레벨 1
+						if (AvaliableSkill->Skill_Level == 1)
+						{
+							AvaliableSkillArr.AddUnique(*AvaliableSkill);
+						}
+					}
+				}
+			}
+		}	
+	}
+	if (AvaliableSkillArr.Num() != 0)
+	{
+		SkillDataLoadDelegate.ExecuteIfBound(AvaliableSkillArr);
+	}
+
+}
+```
 
 
