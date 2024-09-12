@@ -52,7 +52,8 @@ SLGameInstance에서 관리
 
 ## 플레이어 Movement
 
-![Input](https://github.com/user-attachments/assets/cf125126-c67c-4bd8-9117-344cfa431781)&nbsp;
+![Input](https://github.com/user-attachments/assets/cf125126-c67c-4bd8-9117-344cfa431781) 
+&nbsp;
 EnhancedInput을 이용해 플레이어 Movement 구현
 
 
@@ -62,7 +63,8 @@ EnhancedInput을 이용해 플레이어 Movement 구현
 
 -전체적인 흐름-
 
-![LevelupSequence](https://github.com/user-attachments/assets/c197ef9a-1186-4296-9296-0de8604343a4)&nbsp;
+![LevelupSequence](https://github.com/user-attachments/assets/c197ef9a-1186-4296-9296-0de8604343a4)
+&nbsp;
 
 
 
